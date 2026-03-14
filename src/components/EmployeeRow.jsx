@@ -1,15 +1,16 @@
-// since this is a single component idt a seperate folder was required. Just to show clean code seperation
-// name === position === city === salary === action(for redirecting)
-"use client"
-import { useRouter } from 'next/navigation';
-import React from 'react'
+"use client";
 
-function EmployeeRow({employee, style}) {
-    const router = useRouter();
+import { useRouter } from "next/navigation";
+
+export default function EmployeeRow({ employee, style }) {
+
+  const router = useRouter();
+
   return (
+
     <div
       style={style}
-      className="grid grid-cols-5 p-3 border-b items-center bg-white hover:bg-gray-50"
+      className="grid grid-cols-5 items-center border-2 h-[60px] px-3 text-black bg-white hover:bg-gray-50"
     >
 
       <div>{employee[0]}</div>
@@ -30,7 +31,6 @@ function EmployeeRow({employee, style}) {
       </button>
 
     </div>
-  )
-}
 
-export default EmployeeRow
+  );
+}

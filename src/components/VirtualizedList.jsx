@@ -45,8 +45,8 @@ export default function VirtualizedList({
 
     <div
       style={{
-        overflowY: "scroll",
         height: windowHeight,
+        overflowY: "scroll",
         position: "relative"
       }}
       onScroll={onScroll}
@@ -54,8 +54,8 @@ export default function VirtualizedList({
 
       <div
         style={{
-          position: "relative",
-          height: `${innerHeight}px`
+          height: innerHeight,
+          position: "relative"
         }}
       >
 
