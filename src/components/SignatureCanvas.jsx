@@ -4,7 +4,25 @@ import { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SignatureCanvas({ photo, employeeId }) {
+ 
+    function getPosition(e) {
 
+  const canvas = canvasRef.current;
+  const rect = canvas.getBoundingClientRect();
+
+  if (e.touches) {
+    return {
+      x: e.touches[0].clientX - rect.left,
+      y: e.touches[0].clientY - rect.top
+    };
+  }
+
+  return {
+    x: e.nativeEvent.offsetX,
+    y: e.nativeEvent.offsetY
+  };
+
+}
   const canvasRef = useRef(null);
   const router = useRouter();
 
@@ -30,28 +48,38 @@ export default function SignatureCanvas({ photo, employeeId }) {
 
   }, [photo]);
 
-  function startDraw(e) {
+ function startDraw(e) {
 
-    setDrawing(true);
+  e.preventDefault();
 
-    const ctx = canvasRef.current.getContext("2d");
+  setDrawing(true);
 
-    ctx.beginPath();
-    ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+  const ctx = canvasRef.current.getContext("2d");
 
-  }
+  const pos = getPosition(e);
 
-  function draw(e) {
+  ctx.beginPath();
+  ctx.moveTo(pos.x, pos.y);
 
-    if (!drawing) return;
+}
 
-    const ctx = canvasRef.current.getContext("2d");
+function draw(e) {
 
-    ctx.lineWidth = 2;
-    ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-    ctx.stroke();
+  if (!drawing) return;
 
-  }
+  e.preventDefault();
+
+  const ctx = canvasRef.current.getContext("2d");
+
+  const pos = getPosition(e);
+
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+
+  ctx.lineTo(pos.x, pos.y);
+  ctx.stroke();
+
+}
 
   function stopDraw() {
 
@@ -59,28 +87,49 @@ export default function SignatureCanvas({ photo, employeeId }) {
 
   }
 
-  function saveImage() {
+async function saveImage() {
 
-    const finalImage = canvasRef.current.toDataURL("image/png");
+  const canvas = canvasRef.current;
 
-    localStorage.setItem("auditImage", finalImage);
+  canvas.toBlob((blob) => {
 
-    router.push("/analytics");
+    const reader = new FileReader();
 
-  }
+    reader.onloadend = () => {
+
+      const base64data = reader.result;
+
+      localStorage.setItem("auditImage", base64data);
+
+      router.push("/analytics");
+
+    };
+
+    reader.readAsDataURL(blob);
+
+  }, "image/png");
+
+}
+
 
   return (
     <div>
 
       <p className="mb-2">Sign below:</p>
+ {/* touch none prevent accidental scrolling */}
+<canvas
+  ref={canvasRef}
+  className="border touch-none"
 
-      <canvas
-        ref={canvasRef}
-        className="border"
-        onMouseDown={startDraw}
-        onMouseMove={draw}
-        onMouseUp={stopDraw}
-      />
+  onMouseDown={startDraw}
+  onMouseMove={draw}
+  onMouseUp={stopDraw}
+  onMouseLeave={stopDraw}
+
+  onTouchStart={startDraw}
+  onTouchMove={draw}
+  onTouchEnd={stopDraw}
+/>
 
       <button
         onClick={saveImage}
