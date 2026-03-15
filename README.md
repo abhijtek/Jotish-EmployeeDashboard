@@ -23,6 +23,56 @@ This is a frontend Employee Dashboard built with Next.js and React. The app focu
 - Signature capture
 - Virtualized list component for scalable rendering
 
+## Technical Explanation: Virtualization Math
+The `VirtualizedList` component renders only the visible rows based on scroll position, instead of rendering all rows at once.
+
+### Variables
+- `numItems`: total number of rows
+- `itemHeight`: fixed height of each row (in px)
+- `windowHeight`: visible viewport height (in px)
+- `scrollTop`: current vertical scroll offset (in px)
+
+### Core Math
+1. Total scrollable height:
+
+```js
+innerHeight = numItems * itemHeight;
+```
+
+2. First visible row index:
+
+```js
+startIndex = Math.floor(scrollTop / itemHeight);
+```
+
+3. Last visible row index:
+
+```js
+endIndex = Math.min(
+	numItems - 1,
+	Math.floor((scrollTop + windowHeight) / itemHeight)
+);
+```
+
+4. Absolute Y-position of each rendered row:
+
+```js
+top = index * itemHeight;
+```
+
+### Why This Works
+- The outer container scrolls normally.
+- The inner container keeps full logical height (`innerHeight`) so the scrollbar behaves like a full list.
+- Only rows from `startIndex` to `endIndex` are mounted.
+- Each mounted row is absolutely positioned at its exact Y coordinate.
+
+This reduces DOM nodes and improves rendering performance for large datasets.
+
+### Diagrams
+![Virtualization basic logic](/basicLogid.png)
+
+![Virtualized layout structure](/LayoutforV.png)
+
 ## Run Locally
 1. Install dependencies:
 
