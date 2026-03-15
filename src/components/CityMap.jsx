@@ -1,62 +1,133 @@
 "use client";
 
-import { useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useEffect, useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Tooltip,
+  useMap
+} from "react-leaflet";
+import L from "leaflet";
 
-export default function CityMap({ users }) {
+/* ---------- Custom Flaticon Marker ---------- */
+
+const cityIcon = L.icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  tooltipAnchor: [0, -25]
+});
+
+/* ---------- Auto Fit Map Bounds ---------- */
+
+function FitBounds({ coords }) {
+
+  const map = useMap();
 
   useEffect(() => {
 
-    const L = require("leaflet");
+    const points = Object.values(coords);
 
-    delete L.Icon.Default.prototype._getIconUrl;
+    if (points.length === 0) return;
 
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl:
-        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-      iconUrl:
-        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-      shadowUrl:
-        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-    });
+    const bounds = L.latLngBounds(points);
 
-  }, []);
+    map.fitBounds(bounds, { padding: [50, 50] });
 
-  const cityCoords = {
-    Edinburgh: [55.9533, -3.1883],
-    London: [51.5072, -0.1276],
-    Tokyo: [35.6762, 139.6503],
-    "San Francisco": [37.7749, -122.4194],
-    "New York": [40.7128, -74.0060],
-    Singapore: [1.3521, 103.8198],
-  };
+  }, [coords, map]);
 
-  const cities = [...new Set(users.map((u) => u[2]))];
+  return null;
+}
+
+/* ---------- Main Component ---------- */
+
+export default function CityMap({ users }) {
+
+  const [coords, setCoords] = useState({});
+
+  const API_KEY = "66255119c36af91d3e5d560a8e98e7b4";
+
+  const cities = [...new Set(users.map((u) => u[2].trim()))];
+
+  useEffect(() => {
+
+    async function fetchCoordinates() {
+
+      const cityData = {};
+
+      for (const city of cities) {
+
+        try {
+
+          const res = await fetch(
+            `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${API_KEY}`
+          );
+
+          const data = await res.json();
+
+          if (data.length > 0) {
+
+            cityData[city] = [
+              data[0].lat,
+              data[0].lon
+            ];
+
+          }
+
+        } catch (err) {
+
+          console.error("Error fetching coordinates for:", city);
+
+        }
+
+      }
+
+      setCoords(cityData);
+
+    }
+
+    fetchCoordinates();
+
+  }, [cities]);
 
   return (
+
     <MapContainer
-      center={[30, 20]}
+      center={[0, 0]}
       zoom={2}
       style={{ height: "400px", width: "100%" }}
     >
+
       <TileLayer
         attribution="OpenStreetMap"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
+      {/* Automatically center map to markers */}
+      <FitBounds coords={coords} />
+
       {cities.map((city) => {
 
-        const coords = cityCoords[city];
-        if (!coords) return null;
+        const position = coords[city];
+
+        if (!position) return null;
 
         return (
-          <Marker key={city} position={coords}>
-            <Popup>{city}</Popup>
+          <Marker
+            key={city}
+            position={position}
+            icon={cityIcon}
+          >
+            <Tooltip direction="top">
+              {city}
+            </Tooltip>
           </Marker>
         );
 
       })}
 
     </MapContainer>
+
   );
 }
