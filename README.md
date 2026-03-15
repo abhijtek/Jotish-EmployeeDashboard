@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Employee Dashboard - Internship Assignment
 
-## Getting Started
+## Candidate Details
+- Name: Abhijeet Singh Rajput
+- Institute: IIT Dhanbad
+- Program: B.Tech
 
-First, run the development server:
+## Project Overview
+This is a frontend Employee Dashboard built with Next.js and React. The app focuses on practical UI development tasks such as list rendering, analytics views, profile details, and browser API usage.
+
+## Tech Stack
+- Next.js
+- React
+- Tailwind CSS
+- Axios
+- Leaflet / React Leaflet
+
+## Main Features
+- Employee list view
+- Employee detail pages
+- Analytics dashboard
+- Camera capture integration
+- Signature capture
+- Virtualized list component for scalable rendering
+
+## Run Locally
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Open http://localhost:3000 in your browser.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Intentional Bug: Camera Stream Memory Leak
+The camera stream started using `navigator.mediaDevices.getUserMedia()` is not cleaned up when the component unmounts or when the user retakes the photo.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```js
+const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+videoRef.current.srcObject = stream;
+```
 
-## Learn More
+Normally, the stream tracks should be stopped during cleanup:
 
-To learn more about Next.js, take a look at the following resources:
+```js
+const stream = videoRef.current.srcObject;
+stream.getTracks().forEach((track) => track.stop());
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This cleanup is intentionally omitted in the assignment build. Because of that, if the camera is started multiple times, hardware and browser resources may remain active in the background.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Why This Bug Was Chosen
+- It is directly related to browser hardware APIs.
+- It is realistic and commonly seen in real-world apps.
+- The app continues to function, so the demo remains stable.
+- It is easy to explain clearly in a short interview/demo video.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes for Reviewer
+This bug is intentional to demonstrate awareness of resource lifecycle management when working with browser APIs.
