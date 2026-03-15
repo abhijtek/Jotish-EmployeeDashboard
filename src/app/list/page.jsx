@@ -4,11 +4,15 @@ import { useEffect, useState } from "react";
 import VirtualizedList from "@/components/VirtualizedList";
 import EmployeeRow from "@/components/EmployeeRow";
 import { fetchUsers } from "@/utils/fetchUsers";
-
+import { useRouter } from "next/navigation";
 const ROW_HEIGHT = 60;
 
 export default function ListPage() {
-
+  const router = useRouter();
+  useEffect(()=>{
+    const islogin = localStorage.getItem("auth");
+    if(!islogin)router.push("/login"); 
+  },[])
   const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
@@ -28,7 +32,7 @@ export default function ListPage() {
 
     <div className="min-h-screen bg-gray-50">
 
-      {/* Top Header */}
+      
 
       <div className="bg-white border-b">
 
@@ -43,7 +47,6 @@ export default function ListPage() {
       </div>
 
 
-      {/* Page Content */}
 
       <div className="max-w-6xl mx-auto px-6 mt-8">
 
@@ -52,7 +55,6 @@ export default function ListPage() {
         </h2>
 
 
-        {/* Table Header */}
 
         <div className="grid grid-cols-5 bg-gray-100 text-blue-500 p-3 font-semibold border">
 
@@ -65,7 +67,7 @@ export default function ListPage() {
         </div>
 
 
-        {/* Virtualized Table */}
+   
 
         <VirtualizedList
           numItems={employees.length}

@@ -1,59 +1,62 @@
 "use client";
 
+import { useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+
 export default function CityMap({ users }) {
 
+  useEffect(() => {
+
+    const L = require("leaflet");
+
+    delete L.Icon.Default.prototype._getIconUrl;
+
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+      iconUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      shadowUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    });
+
+  }, []);
+
   const cityCoords = {
-    Edinburgh: [410, 120],
-    London: [395, 140],
-    Tokyo: [720, 210],
-    "San Francisco": [120, 250],
-    "New York": [210, 220],
-    Singapore: [660, 330]
+    Edinburgh: [55.9533, -3.1883],
+    London: [51.5072, -0.1276],
+    Tokyo: [35.6762, 139.6503],
+    "San Francisco": [37.7749, -122.4194],
+    "New York": [40.7128, -74.0060],
+    Singapore: [1.3521, 103.8198],
   };
 
   const cities = [...new Set(users.map((u) => u[2]))];
 
   return (
-    <div>
+    <MapContainer
+      center={[30, 20]}
+      zoom={2}
+      style={{ height: "400px", width: "100%" }}
+    >
+      <TileLayer
+        attribution="OpenStreetMap"
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
 
-      <h2 className="text-xl font-semibold mb-4">
-        Employee Locations
-      </h2>
+      {cities.map((city) => {
 
-      <svg
-        viewBox="0 0 1000 500"
-        className="border w-full max-w-[900px] bg-slate-900"
-      >
+        const coords = cityCoords[city];
+        if (!coords) return null;
 
-        {/* simple world silhouette */}
-        <rect width="1000" height="500" fill="#0f172a" />
+        return (
+          <Marker key={city} position={coords}>
+            <Popup>{city}</Popup>
+          </Marker>
+        );
 
-        <ellipse cx="300" cy="250" rx="220" ry="140" fill="#1e293b" />
-        <ellipse cx="600" cy="220" rx="250" ry="150" fill="#1e293b" />
-        <ellipse cx="820" cy="260" rx="120" ry="100" fill="#1e293b" />
+      })}
 
-        {cities.map((city) => {
-
-          const coord = cityCoords[city];
-
-          if (!coord) return null;
-
-          return (
-
-            <circle
-              key={city}
-              cx={coord[0]}
-              cy={coord[1]}
-              r="6"
-              fill="red"
-            />
-
-          );
-
-        })}
-
-      </svg>
-
-    </div>
+    </MapContainer>
   );
 }

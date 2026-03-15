@@ -12,9 +12,7 @@ export default function SalaryChart({ users }) {
       u[5].replace(/[$,]/g, "")
     );
 
-    if (!cityTotals[city]) {
-      cityTotals[city] = 0;
-    }
+    if (!cityTotals[city]) cityTotals[city] = 0;
 
     cityTotals[city] += salary;
 
@@ -24,7 +22,11 @@ export default function SalaryChart({ users }) {
 
   const maxSalary = Math.max(...Object.values(cityTotals));
 
-  const barWidth = 80;
+  const chartHeight = 300;
+  const barWidth = 60;
+  const gap = 40;
+
+  const svgWidth = cities.length * (barWidth + gap) + 150;
 
   return (
     <div>
@@ -33,36 +35,91 @@ export default function SalaryChart({ users }) {
         Salary Distribution by City
       </h2>
 
-      <svg width="700" height="400">
+      <svg width={svgWidth} height="400">
 
-        {cities.map((city, index) => {
+        {/* Y Axis */}
+        <line
+          x1="50"
+          y1="20"
+          x2="50"
+          y2="350"
+          stroke="white"
+        />
 
-          const value = cityTotals[city];
+        {/* X Axis */}
+        <line
+          x1="50"
+          y1="350"
+          x2={svgWidth - 50}
+          y2="350"
+          stroke="white"
+        />
 
-          const height = (value / maxSalary) * 300;
+        {/* Y Axis scale ticks */}
+        {[0.25, 0.5, 0.75, 1].map((p, i) => {
+
+          const y = 350 - chartHeight * p;
 
           return (
+            <g key={i}>
 
-            <g key={city}>
-
-              <rect
-                x={index * barWidth + 50}
-                y={350 - height}
-                width={40}
-                height={height}
-                fill="steelblue"
+              <line
+                x1="45"
+                y1={y}
+                x2="50"
+                y2={y}
+                stroke="white"
               />
 
               <text
-                x={index * barWidth + 50}
+                x="10"
+                y={y + 4}
+                fill="white"
+                fontSize="10"
+              >
+                {Math.round((maxSalary * p) / 1000)}k
+              </text>
+
+            </g>
+          );
+
+        })}
+
+        {/* Bars */}
+        {cities.map((city, i) => {
+
+          const value = cityTotals[city];
+
+          const height =
+            (value / maxSalary) * chartHeight;
+
+          const x = 70 + i * (barWidth + gap);
+
+          const y = 350 - height;
+
+          return (
+            <g key={city}>
+
+              <rect
+                x={x}
+                y={y}
+                width={barWidth}
+                height={height}
+                fill="#3b82f6"
+              />
+
+              {/* City label */}
+              <text
+                x={x + barWidth / 2}
                 y="370"
+                fill="white"
                 fontSize="12"
+                textAnchor="middle"
               >
                 {city}
               </text>
 
             </g>
-
           );
 
         })}

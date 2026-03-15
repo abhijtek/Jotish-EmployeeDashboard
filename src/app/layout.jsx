@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
+
 import { UserContextProvider } from "@/context/UserContextProvider";
 //import { useRouter } from "next/navigation";
 const geistSans = Geist({
