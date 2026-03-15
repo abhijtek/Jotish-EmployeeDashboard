@@ -69,9 +69,9 @@ top = index * itemHeight;
 This reduces DOM nodes and improves rendering performance for large datasets.
 
 ### Diagrams
-![Virtualization basic logic](/basicLogid.png)
+![Virtualization basic logic](public/basicLogid.png)
 
-![Virtualized layout structure](/LayoutforV.png)
+![Virtualized layout structure](public/LayoutforV.png)
 
 ## Run Locally
 1. Install dependencies:
