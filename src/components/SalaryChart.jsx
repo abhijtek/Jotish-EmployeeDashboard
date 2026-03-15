@@ -22,7 +22,7 @@ export default function SalaryChart({ users }) {
 
   const maxSalary = Math.max(...Object.values(cityTotals));
 
-  const chartHeight = 300;
+  const chartHeight = 300; // mx ht
   const barWidth = 60;
   const gap = 40;
 
@@ -55,7 +55,7 @@ export default function SalaryChart({ users }) {
           stroke="white"
         />
 
-        {/* Y Axis scale ticks */}
+        {/* y axis scale */}
         {[0.25, 0.5, 0.75, 1].map((p, i) => {
 
           const y = 350 - chartHeight * p;
@@ -85,7 +85,7 @@ export default function SalaryChart({ users }) {
 
         })}
 
-        {/* Bars */}
+        {/* bars */}
         {cities.map((city, i) => {
 
           const value = cityTotals[city];
@@ -108,7 +108,7 @@ export default function SalaryChart({ users }) {
                 fill="#3b82f6"
               />
 
-              {/* City label */}
+              {/* cities */}
               <text
                 x={x + barWidth / 2}
                 y="370"
