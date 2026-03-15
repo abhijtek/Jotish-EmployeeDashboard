@@ -49,7 +49,7 @@ export default function CameraCapture({ employeeId }) {
           <video
             ref={videoRef}
             autoPlay
-            className="border border-gray-600 w-[500px]"
+            className="border border-gray-600 w-125"
           />
 
           <div className="flex gap-3">
