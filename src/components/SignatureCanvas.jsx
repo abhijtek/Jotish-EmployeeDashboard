@@ -87,27 +87,15 @@ function draw(e) {
 
   }
 
-async function saveImage() {
+function saveImage() {
 
   const canvas = canvasRef.current;
 
-  canvas.toBlob((blob) => {
+  const base64 = canvas.toDataURL("image/png");
 
-    const reader = new FileReader();
+  localStorage.setItem("auditImage", base64);
 
-    reader.onloadend = () => {
-
-      const base64data = reader.result;
-
-      localStorage.setItem("auditImage", base64data);
-
-      router.push("/analytics");
-
-    };
-
-    reader.readAsDataURL(blob);
-
-  }, "image/png");
+  router.push("/analytics");
 
 }
 

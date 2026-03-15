@@ -20,6 +20,7 @@ export default function ListPage() {
     async function loadUsers() {
 
       const data = await fetchUsers();
+      console.log("fetcehd users:",data);
       setEmployees(data);
 
     }

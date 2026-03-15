@@ -43,14 +43,14 @@ export default function VirtualizedList({
 
   return (
 
-    <div
-      style={{
-        height: windowHeight,
-        overflowY: "scroll",
-        position: "relative"
-      }}
-      onScroll={onScroll}
-    >
+<div
+  className="overflow-y-scroll scrollbar-hide"
+  style={{
+    height: windowHeight,
+    position: "relative"
+  }}
+  onScroll={onScroll}
+>
 
       <div
         style={{

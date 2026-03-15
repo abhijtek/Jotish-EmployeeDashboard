@@ -25,7 +25,7 @@ export default function EmployeeRow({ employee, style }) {
 
       <button
         onClick={() => router.push(`/details/${employee[3]}`)}
-        className="text-blue-600 hover:underline"
+        className="text-blue-600 hover:underline inline-block text-start ml-1.5"
       >
         View
       </button>
