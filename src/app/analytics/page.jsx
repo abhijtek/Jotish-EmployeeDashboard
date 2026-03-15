@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { fetchUsers } from "@/utils/fetchUsers";
 
 import AuditImage from "@/components/AuditImage";
 import SalaryChart from "@/components/SalaryChart";
-//import CityMap from "@/components/CityMap";
 import dynamic from "next/dynamic";
 
 const CityMap = dynamic(
@@ -14,35 +14,46 @@ const CityMap = dynamic(
 );
 
 export default function AnalyticsPage() {
-    useEffect(()=>{
-    const islogin = localStorage.getItem("auth");
-    if(!islogin)router.push("/login"); 
-  },[])
+
+  const router = useRouter();
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
+    const islogin = localStorage.getItem("auth");
+    if (!islogin) router.push("/login");
+  }, []);
 
+  useEffect(() => {
     async function loadUsers() {
       const data = await fetchUsers();
       setUsers(data);
     }
 
     loadUsers();
-
   }, []);
 
   return (
-    <div className="p-10 space-y-12">
+    <div className="flex justify-center py-12">
 
-      <h1 className="text-2xl font-bold">
-        Employee Analytics
-      </h1>
+      <div className="w-full max-w-5xl flex flex-col items-center gap-12">
 
-      <AuditImage />
+        <h1 className="text-3xl font-bold text-gray-100">
+          Employee Analytics
+        </h1>
 
-      <SalaryChart users={users} />
+        <div className="w-full flex justify-center">
+          <AuditImage />
+        </div>
 
-      <CityMap users={users} />
+        <div className="w-full flex justify-center">
+          <SalaryChart users={users} />
+        </div>
+
+        <div className="w-full flex justify-center">
+          <CityMap users={users} />
+        </div>
+
+      </div>
 
     </div>
   );

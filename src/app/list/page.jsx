@@ -5,24 +5,24 @@ import VirtualizedList from "@/components/VirtualizedList";
 import EmployeeRow from "@/components/EmployeeRow";
 import { fetchUsers } from "@/utils/fetchUsers";
 import { useRouter } from "next/navigation";
+
 const ROW_HEIGHT = 60;
 
 export default function ListPage() {
+
   const router = useRouter();
-  useEffect(()=>{
-    const islogin = localStorage.getItem("auth");
-    if(!islogin)router.push("/login"); 
-  },[])
   const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    const islogin = localStorage.getItem("auth");
+    if (!islogin) router.push("/login");
+  }, []);
 
   useEffect(() => {
 
     async function loadUsers() {
-
       const data = await fetchUsers();
-      console.log("fetcehd users:",data);
       setEmployees(data);
-
     }
 
     loadUsers();
@@ -31,15 +31,13 @@ export default function ListPage() {
 
   return (
 
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col items-center">
 
-      
+      <div className="w-full border-b border-gray-700">
 
-      <div className="bg-white border-b">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
 
-        <div className="max-w-6xl mx-auto px-6 py-4">
-
-          <h1 className="text-2xl text-gray-700 font-semibold">
+          <h1 className="text-2xl font-semibold text-gray-100">
             Employee Insights Dashboard
           </h1>
 
@@ -47,17 +45,13 @@ export default function ListPage() {
 
       </div>
 
+      <div className="w-full max-w-5xl px-6 mt-10 flex flex-col gap-4">
 
-
-      <div className="max-w-6xl mx-auto px-6 mt-8">
-
-        <h2 className="text-xl text-black font-medium mb-4">
+        <h2 className="text-lg font-semibold text-gray-200">
           Employee List
         </h2>
 
-
-
-        <div className="grid grid-cols-5 bg-gray-100 text-blue-500 p-3 font-semibold border">
+        <div className="grid grid-cols-5 border border-gray-700 text-blue-400 font-semibold p-3">
 
           <div>Name</div>
           <div>Position</div>
@@ -66,9 +60,6 @@ export default function ListPage() {
           <div>Action</div>
 
         </div>
-
-
-   
 
         <VirtualizedList
           numItems={employees.length}

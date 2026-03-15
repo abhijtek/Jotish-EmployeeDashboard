@@ -1,20 +1,28 @@
 "use client"
-import React, { useEffect } from 'react'
-import { useRouter } from 'next/navigation';
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 function Details() {
-    const router = useRouter();
-   useEffect(()=>{
+
+  const router = useRouter();
+
+  useEffect(() => {
+
     const isUserLoggedIn = localStorage.getItem("auth");
-    if(isUserLoggedIn){
-       router.push("/list");
+
+    if (!isUserLoggedIn) {
+      router.push("/login");
     }
-    else{
-        router.push("/login")
-    }
-   },[]) 
+
+  }, []);
+
   return (
-    <div>Details</div>
-  )
+
+    <div className="min-h-screen flex items-center justify-center text-gray-200 text-lg">
+      Details
+    </div>
+
+  );
 }
 
-export default Details
+export default Details;
